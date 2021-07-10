@@ -19,8 +19,7 @@ const MyCarousel = () => {
     state,
   } = usePony({ numItems: items.length });
 
-  // FIXME: fix transition.
-
+  // TODO: move this to usepony
   useEffect(() => {
     // Listen for swipe direction changes. Apply appropriate translateX transition.
     if (state.currentSwipeDirection) {
@@ -35,16 +34,16 @@ const MyCarousel = () => {
           : transformArray.reverse(),
         {
           easing: 'ease-in',
-          duration: 100,
+          duration: 200, // TODO: make this a constant
         }
       );
 
       // Automatically focus on new active carousel slide for a11y reasons.
-      // setTimeout(() => {
-      //   document.get('active-carousel-slide')?.focus();
-      // }, 100);
+      setTimeout(() => {
+        document.getElementById('arousel-item-active')?.focus();
+      }, 200);
     }
-  }, [state.activeSlideIndex, state.currentSwipeDirection]);
+  }, [state.activeSlideIndex, state.currentSwipeDirection, items.length]);
 
   return (
     <div {...getSectionProps()}>
