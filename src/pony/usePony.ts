@@ -1,11 +1,8 @@
-import React, {
-  useRef,
-  useEffect,
+import {
+  CSSProperties,
   useCallback,
-  useMemo,
   useReducer,
   useState,
-  CSSProperties,
   AriaAttributes,
 } from 'react';
 import { Action, ActionKind, State } from './usePony.interface';
@@ -47,8 +44,6 @@ const reducer = (prevState: State, action: Action) => {
           : prevState.activeSlideIndex - 1,
       };
     case ActionKind.Next:
-      console.log({ prevState });
-
       const isLastIndex = prevState.activeSlideIndex === payload.numItems - 1;
       return {
         ...prevState,
@@ -92,20 +87,28 @@ export const usePony = ({ numItems }: { numItems: number }) => {
   });
 
   const getCarouselItemProps = (index: number) => ({
-    id: `carousel-item-${index}`,
+    id: `carousel-item-${index}${
+      index === state.activeSlideIndex ? '-active' : ''
+    }`,
     'aria-roledescription': 'slide',
     'aria-label': `${index} of ${numItems}`,
     'aria-current': index === state.activeSlideIndex,
     'aria-hidden': index !== state.activeSlideIndex,
-    order: getOrder({
-      index,
-      activeSlideIndex: state.activeSlideIndex,
-      numItems,
-    }),
     style: {
+      order: getOrder({
+        index,
+        activeSlideIndex: state.activeSlideIndex,
+        numItems,
+      }),
       display: 'flex',
       flex: '1 0 100%',
       flexBasis: '100%',
+      transition:
+        // Only apply this transition when the current swipe direction is next
+        // This ensures the re-ordering of items is smoother.
+        currentSwipeDirection === ActionKind.Next
+          ? 'order 0.3s ease-in'
+          : 'none',
     },
   });
 
@@ -127,7 +130,7 @@ export const usePony = ({ numItems }: { numItems: number }) => {
       position: 'absolute',
       whiteSpace: 'nowrap',
       width: '1px',
-    } as React.CSSProperties,
+    } as CSSProperties,
   });
 
   // returns
