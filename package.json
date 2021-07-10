@@ -40,5 +40,7 @@
       "last 1 safari version"
     ]
   },
-  "setupFilesAfterEnv": ["<rootDir>/setupTest.js"]
+  "setupFilesAfterEnv": [
+    "<rootDir>/setupTest.js"
+  ]
 }
