@@ -1,5 +1,3 @@
-import type { MutableRefObject } from 'react';
-
 export enum ActionKind {
   Next = 'Next',
   Previous = 'Previous',
