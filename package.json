@@ -1,6 +1,6 @@
 {
   "name": "pony-props",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "types": "dist/js/index.d.ts",
   "private": false,
   "publishConfig": {
@@ -28,6 +28,7 @@
     "test": "tsdx test --passWithNoTests",
     "lint": "tsdx lint",
     "prepare": "tsdx build",
+    
     "size": "size-limit",
     "analyze": "size-limit --why",
     "storybook": "start-storybook -p 6006",
