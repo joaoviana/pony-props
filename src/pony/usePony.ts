@@ -4,6 +4,8 @@ import {
   useReducer,
   useState,
   AriaAttributes,
+  useEffect,
+  useRef,
 } from 'react';
 import { Action, ActionKind, State } from './usePony.interface';
 
@@ -57,9 +59,35 @@ const reducer = (prevState: State, action: Action) => {
 
 export const usePony = ({ numItems }: { numItems: number }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const sliderRef = useRef<HTMLUListElement>(null);
   const [currentSwipeDirection, setCurrentSwipeDirection] = useState<
     ActionKind.Previous | ActionKind.Next | null
   >(null);
+
+  useEffect(() => {
+    // Listen for swipe direction changes. Apply appropriate translateX transition.
+    if (currentSwipeDirection) {
+      const transformArray = [
+        { transform: 'translateX(-100%)' },
+        { transform: 'translateX(0px)' },
+      ];
+
+      sliderRef?.current?.animate(
+        currentSwipeDirection === ActionKind.Previous
+          ? transformArray
+          : transformArray.reverse(),
+        {
+          easing: 'ease-in',
+          duration: 200, // TODO: make this a constant
+        }
+      );
+
+      // Automatically focus on new active carousel slide for a11y reasons.
+      setTimeout(() => {
+        document.getElementById('arousel-item-active')?.focus();
+      }, 200);
+    }
+  }, [state.activeSlideIndex, currentSwipeDirection, numItems]);
 
   const slide = (slideDirection: ActionKind.Previous | ActionKind.Next) => {
     setCurrentSwipeDirection(slideDirection);
@@ -81,6 +109,7 @@ export const usePony = ({ numItems }: { numItems: number }) => {
 
   const getCarouselProps = () => ({
     'aria-label': 'Slides',
+    ref: sliderRef,
     style: {
       display: 'flex',
     },
