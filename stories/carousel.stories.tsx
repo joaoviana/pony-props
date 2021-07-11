@@ -1,25 +1,15 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import { Thing, Props } from '../src';
+import { MyCarousel } from '../src/components/carousel';
 
 const meta: Meta = {
-  title: 'Welcome',
-  component: Thing,
-  argTypes: {
-    children: {
-      control: {
-        type: 'text',
-      },
-    },
-  },
-  parameters: {
-    controls: { expanded: true },
-  },
+  title: 'Carousel',
+  component: MyCarousel,
 };
 
 export default meta;
 
-const Template: Story<Props> = args => <Thing {...args} />;
+const Template: Story = (args) => <MyCarousel {...args} />;
 
 // By passing using the Args format for exported stories, you can control the props for a component for reuse in a test
 // https://storybook.js.org/docs/react/workflows/unit-testing

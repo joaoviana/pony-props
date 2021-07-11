@@ -1,4 +1,3 @@
-import { render } from 'react-dom';
 import { useEffect, useRef } from 'react';
 import { usePony } from '../pony/usePony';
 import { ActionKind } from '../pony/usePony.interface';
