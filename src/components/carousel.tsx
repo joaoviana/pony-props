@@ -1,9 +1,9 @@
 import { render } from 'react-dom';
 import { useEffect, useRef } from 'react';
-import { usePony } from './pony/usePony';
-import { ActionKind } from './pony/usePony.interface';
+import { usePony } from '../pony/usePony';
+import { ActionKind } from '../pony/usePony.interface';
 
-const MyCarousel = () => {
+export const MyCarousel = () => {
   const sliderRef = useRef<HTMLUListElement>(null);
   const items = new Array(10).fill(null).map((_, idx) => ({
     id: idx,
@@ -65,5 +65,3 @@ const MyCarousel = () => {
     </div>
   );
 };
-
-render(<MyCarousel />, document.getElementById('root'));
