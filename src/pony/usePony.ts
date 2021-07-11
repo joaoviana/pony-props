@@ -57,6 +57,9 @@ const reducer = (prevState: State, action: Action) => {
   }
 };
 
+// TODO: readme
+// TODO: throw error if not all props are applied, warning the dev that the component might no be 100% accessible
+
 export const usePony = ({ numItems }: { numItems: number }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const sliderRef = useRef<HTMLUListElement>(null);
