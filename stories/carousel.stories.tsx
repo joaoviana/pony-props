@@ -10,18 +10,18 @@ export const MyCarousel = () => {
   }));
   const {
     getSectionProps,
-    getSectionHeadingProps,
+    getHeadingProps,
     getCarouselWrapperProps,
     getCarouselProps,
     getCarouselItemProps,
-    getCarouselButtonProps,
-    getCarouselAnnouncerProps,
+    getButtonProps,
+    getAnnouncerProps,
     state,
   } = usePony({ numItems: items.length });
 
   return (
     <div {...getSectionProps()}>
-      <h1 {...getSectionHeadingProps()}>Heading</h1>
+      <h1 {...getHeadingProps()}>Heading</h1>
       <div {...getCarouselWrapperProps()}>
         <ul {...getCarouselProps()}>
           {items.map((item, idx) => (
@@ -31,9 +31,9 @@ export const MyCarousel = () => {
           ))}
         </ul>
       </div>
-      <button {...getCarouselButtonProps(ActionKind.Previous)}>Previous</button>
-      <button {...getCarouselButtonProps(ActionKind.Next)}>Next</button>
-      <div {...getCarouselAnnouncerProps()}>
+      <button {...getButtonProps(ActionKind.Previous)}>Previous</button>
+      <button {...getButtonProps(ActionKind.Next)}>Next</button>
+      <div {...getAnnouncerProps()}>
         <p>{`Item ${state.activeSlideIndex + 1} of ${items.length}`}</p>
       </div>
     </div>

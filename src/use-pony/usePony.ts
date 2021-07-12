@@ -13,23 +13,52 @@ import { getOrder } from './utils/get-flex-order';
 const TRANSITION_DURATION_MS = 200;
 
 // TODO: readme
-// TODO: throw error if not all props are applied, warning the dev that the component might no be 100% accessible
 
 export const usePony = ({ numItems }: { numItems: number }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const carouselRef = useRef<HTMLDivElement>(null);
-  const sliderRef = useRef<HTMLUListElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const carouselWrapperRef = useRef<HTMLDivElement>(null);
+  const carouselRef = useRef<HTMLUListElement>(null);
+  const carouselItemRef = useRef<HTMLLIElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const announcerRef = useRef<HTMLDivElement>(null);
+
   const [currentSwipeDirection, setCurrentSwipeDirection] = useState<
     ActionKind.Previous | ActionKind.Next | null
   >(null);
 
   useEffect(() => {
-    if (carouselRef.current) {
-      Array.from(carouselRef.current?.children).forEach((child) => {
-        console.log(child);
-      });
+    if (!sectionRef.current) {
+      throw new Error('please apply getSectionProps() to your <section>');
     }
-  }, [carouselRef]);
+    if (!headingRef.current) {
+      throw new Error('please apply getHeadingProps() to your <h{1,2,3}>');
+    }
+    if (!carouselWrapperRef.current) {
+      throw new Error('please apply getCarouselWrapperProps() to your <div>');
+    }
+    if (!carouselRef.current) {
+      throw new Error('please apply getCarouselProps() to your <ul>');
+    }
+    if (!carouselItemRef.current) {
+      throw new Error('please apply getCarouselItemProps() to your <li>');
+    }
+    if (!buttonRef.current) {
+      throw new Error('please apply getButtonProps() to your <button>');
+    }
+    if (!announcerRef.current) {
+      throw new Error('please apply getAnnouncerProps() to your <div>');
+    }
+  }, [
+    sectionRef,
+    headingRef,
+    carouselWrapperRef,
+    carouselRef,
+    carouselItemRef,
+    buttonRef,
+    announcerRef,
+  ]);
 
   useEffect(() => {
     // Listen for swipe direction changes. Apply appropriate translateX transition.
@@ -39,7 +68,7 @@ export const usePony = ({ numItems }: { numItems: number }) => {
         { transform: 'translateX(0px)' },
       ];
 
-      sliderRef?.current?.animate(
+      carouselRef?.current?.animate(
         currentSwipeDirection === ActionKind.Previous
           ? transformArray
           : transformArray.reverse(),
@@ -62,29 +91,32 @@ export const usePony = ({ numItems }: { numItems: number }) => {
   };
 
   const getSectionProps = () => ({
+    ref: sectionRef,
     as: 'section',
-    'aria-labelledby': 'carouselheading',
+    'aria-labelledby': 'carousel-heading',
     'aria-roledescription': 'carousel',
-    ref: carouselRef,
   });
 
-  const getSectionHeadingProps = () => ({
-    id: 'carouselheading',
+  const getHeadingProps = () => ({
+    ref: headingRef,
+    id: 'carousel-heading',
   });
 
   const getCarouselWrapperProps = () => ({
+    ref: carouselWrapperRef,
     style: { width: '100%', overflow: 'hidden' },
   });
 
   const getCarouselProps = () => ({
+    ref: carouselRef,
     'aria-label': 'Slides',
-    ref: sliderRef,
     style: {
       display: 'flex',
     },
   });
 
   const getCarouselItemProps = (index: number) => ({
+    ref: carouselItemRef,
     id: `carousel-item-${index}${
       index === state.activeSlideIndex ? '-active' : ''
     }`,
@@ -110,14 +142,16 @@ export const usePony = ({ numItems }: { numItems: number }) => {
     },
   });
 
-  const getCarouselButtonProps = (
+  const getButtonProps = (
     direction: ActionKind.Previous | ActionKind.Next
   ) => ({
+    ref: buttonRef,
     'aria-label': direction === ActionKind.Previous ? 'Previous' : 'Next',
     onClick: () => slide(direction),
   });
 
-  const getCarouselAnnouncerProps = () => ({
+  const getAnnouncerProps = () => ({
+    ref: announcerRef,
     'aria-live': 'polite' as AriaAttributes['aria-live'],
     'aria-atomic': 'true' as AriaAttributes['aria-atomic'],
     style: {
@@ -134,12 +168,12 @@ export const usePony = ({ numItems }: { numItems: number }) => {
   return {
     // prop getters.
     getSectionProps,
-    getSectionHeadingProps,
+    getHeadingProps,
     getCarouselWrapperProps,
     getCarouselProps,
     getCarouselItemProps,
-    getCarouselButtonProps,
-    getCarouselAnnouncerProps,
+    getButtonProps,
+    getAnnouncerProps,
     // state.
     state: {
       ...state,
