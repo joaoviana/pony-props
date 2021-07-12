@@ -1,71 +1,35 @@
 import {
   CSSProperties,
-  useCallback,
   useReducer,
   useState,
   AriaAttributes,
   useEffect,
   useRef,
 } from 'react';
-import { Action, ActionKind, State } from './usePony.interface';
+import { ActionKind } from './usePony.interface';
+import { initialState, reducer } from './usePony.state';
+import { getOrder } from './utils/get-flex-order';
 
-const initialState: State = {
-  activeSlideIndex: 0,
-  slideDirection: ActionKind.Reset,
-};
-
-/**
- * Gets the flex order for a slide.
- * @param index - the index of the slide
- * @param activeSlideIndex - the current/visible slide index
- * @param numItems - number of slides in carousel
- * @returns the flex order for a carousel item
- */
-const getOrder = ({
-  index,
-  activeSlideIndex,
-  numItems,
-}: Record<'index' | 'activeSlideIndex' | 'numItems', number>) =>
-  index - activeSlideIndex < 0
-    ? numItems - Math.abs(index - activeSlideIndex)
-    : index - activeSlideIndex;
-
-const reducer = (prevState: State, action: Action) => {
-  const { type, payload } = action;
-
-  switch (type) {
-    case ActionKind.Reset:
-      return initialState;
-    case ActionKind.Previous:
-      const isFirstIndex = prevState.activeSlideIndex === 0;
-      return {
-        ...prevState,
-        slideDirection: ActionKind.Previous,
-        activeSlideIndex: isFirstIndex
-          ? payload?.numItems - 1
-          : prevState.activeSlideIndex - 1,
-      };
-    case ActionKind.Next:
-      const isLastIndex = prevState.activeSlideIndex === payload.numItems - 1;
-      return {
-        ...prevState,
-        slideDirection: ActionKind.Next,
-        activeSlideIndex: isLastIndex ? 0 : prevState.activeSlideIndex + 1,
-      };
-    default:
-      return prevState;
-  }
-};
+const TRANSITION_DURATION_MS = 200;
 
 // TODO: readme
 // TODO: throw error if not all props are applied, warning the dev that the component might no be 100% accessible
 
 export const usePony = ({ numItems }: { numItems: number }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const carouselRef = useRef<HTMLDivElement>(null);
   const sliderRef = useRef<HTMLUListElement>(null);
   const [currentSwipeDirection, setCurrentSwipeDirection] = useState<
     ActionKind.Previous | ActionKind.Next | null
   >(null);
+
+  useEffect(() => {
+    if (carouselRef.current) {
+      Array.from(carouselRef.current?.children).forEach((child) => {
+        console.log(child);
+      });
+    }
+  }, [carouselRef]);
 
   useEffect(() => {
     // Listen for swipe direction changes. Apply appropriate translateX transition.
@@ -81,14 +45,14 @@ export const usePony = ({ numItems }: { numItems: number }) => {
           : transformArray.reverse(),
         {
           easing: 'ease-in',
-          duration: 200, // TODO: make this a constant
+          duration: TRANSITION_DURATION_MS,
         }
       );
 
       // Automatically focus on new active carousel slide for a11y reasons.
       setTimeout(() => {
         document.getElementById('arousel-item-active')?.focus();
-      }, 200);
+      }, TRANSITION_DURATION_MS);
     }
   }, [state.activeSlideIndex, currentSwipeDirection, numItems]);
 
@@ -97,17 +61,19 @@ export const usePony = ({ numItems }: { numItems: number }) => {
     dispatch({ type: slideDirection, payload: { numItems } });
   };
 
-  const getSectionProps = useCallback(
-    () => ({
-      as: 'section',
-      'aria-labelledby': 'carouselheading',
-      'aria-roledescription': 'carousel',
-    }),
-    []
-  );
+  const getSectionProps = () => ({
+    as: 'section',
+    'aria-labelledby': 'carouselheading',
+    'aria-roledescription': 'carousel',
+    ref: carouselRef,
+  });
 
   const getSectionHeadingProps = () => ({
     id: 'carouselheading',
+  });
+
+  const getCarouselWrapperProps = () => ({
+    style: { width: '100%', overflow: 'hidden' },
   });
 
   const getCarouselProps = () => ({
@@ -165,17 +131,15 @@ export const usePony = ({ numItems }: { numItems: number }) => {
     } as CSSProperties,
   });
 
-  // returns
-
   return {
     // prop getters.
     getSectionProps,
     getSectionHeadingProps,
+    getCarouselWrapperProps,
     getCarouselProps,
     getCarouselItemProps,
     getCarouselButtonProps,
     getCarouselAnnouncerProps,
-    // actions.
     // state.
     state: {
       ...state,

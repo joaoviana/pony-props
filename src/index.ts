@@ -1,1 +1,1 @@
-export * from './pony';
+export * from './use-pony';

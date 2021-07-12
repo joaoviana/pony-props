@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import { usePony } from '../src/pony/usePony';
-import { ActionKind } from '../src/pony/usePony.interface';
+import { usePony } from '../src/use-pony/usePony';
+import { ActionKind } from '../src/use-pony/usePony.interface';
 
 export const MyCarousel = () => {
   const items = new Array(10).fill(null).map((_, idx) => ({
@@ -11,6 +11,7 @@ export const MyCarousel = () => {
   const {
     getSectionProps,
     getSectionHeadingProps,
+    getCarouselWrapperProps,
     getCarouselProps,
     getCarouselItemProps,
     getCarouselButtonProps,
@@ -21,7 +22,7 @@ export const MyCarousel = () => {
   return (
     <div {...getSectionProps()}>
       <h1 {...getSectionHeadingProps()}>Heading</h1>
-      <div style={{ width: '100%', overflow: 'hidden' }}>
+      <div {...getCarouselWrapperProps()}>
         <ul {...getCarouselProps()}>
           {items.map((item, idx) => (
             <li key={idx} {...getCarouselItemProps(idx)}>
