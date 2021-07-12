@@ -1,5 +1,7 @@
 # Pony Props
 
+Live Example: https://codesandbox.io/s/bold-wildflower-b6lhy
+
 ## Build an accessible React Carousel component with `usePony`
 
 We usually resort to external packages to add a Carousel component to our apps. However, I often found them lacking accessibility. Carousels should have a specific structure, with the correct HTML attributes to ensure our component is readable by screen-readers.
